@@ -1,0 +1,29 @@
+{
+  "name": "slack-command-line",
+  "version": "0.0.1",
+  "description": "A custom tool to work with Slack Web Hooks and Command Line Tools",
+  "main": "app.js",
+  "dependencies": {
+    "hapi": "7.1.1",
+    "joi": "4.7.0"
+    },
+  "devDependencies": {
+
+  },
+  "bugs": {
+    "url" : "https://github.com/bighappyworld/slack-command-line/issues"
+  },
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bighappyworld/slack-command-line"
+  },
+  "preferGlobal": true,
+  "bin": { "email-verify": "./app.js" },
+  "author": "Robert Oaks <rob@below.io> (http://below.io/)",
+  "license": "ISC",
+  "keywords": [ "slack", "command","line","command-line", "rest" ],
+  "private": true
+}

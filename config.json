@@ -1,0 +1,33 @@
+{
+  "host" : "localhost",
+  "port" : 5000,
+  "app" : {
+    "admin_ids" : [ "U0XXXXXX", "U02YYYYYY" ],
+    "cli_token" : "OWIEFOIFDBWEFosdfwwefoijS",
+    "cli_file" : "./command-line.js",
+    "cli_path" : "/slack/cli/",
+    "access_denied" : "Invalid Request",
+    "request_denied" : "Invalid Request",
+    "illegal_command" : "Invalid Request",
+    "cli_filters" : {
+      "whitelist" : [ "pm2" ],
+      "blacklist" : [ "sudo", "&&", ";", "|" ],
+      "output_filters" : [
+                            {
+                              "regex" : "(\\[[0-9]*m)|(┌.*┐)|(├.*┤)|(└.*┘)",
+                              "txt" : ""
+                            }
+                         ]
+    },
+    "cli_commands" : [
+      { "slack_cmd" : "restart all", "cli_cmd" : "pm2 restart all" },
+      { "slack_cmd" : "processes", "cli_cmd" : "ps -aux | grep pm2" }
+    ],
+    "required_headers" : [
+      { "key" : "user-agent",
+        "value" : "Slackbot 1.0 (+https://api.slack.com/robots)" },
+      { "key" : "host",
+        "value" : "api.example.com" }
+    ]
+  }
+}

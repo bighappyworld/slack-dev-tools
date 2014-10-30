@@ -1,0 +1,24 @@
+{
+  "apps" :
+    [{
+      "name"             : "slack-cli",
+      "script"           : "app.js",
+      "error_file"       : "err.log",
+      "out_file"         : "out.log",
+      "pid_file"         : "pids.pid",
+      "instances"        : "1",
+      "min_uptime"       : "200",
+
+      "watch"            : true,
+      "ignoreWatch"      : ["ashley-package",
+                            "node_modules",
+                            "bin"],
+      "merge_logs"       : "true",
+      "exec_interpreter" : "node",
+      "exec_mode"        : "fork_mode",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }]
+
+}
