@@ -14,3 +14,5 @@ pids
 *.seed
 
 tmp
+deploy*.json
+deploy*.js

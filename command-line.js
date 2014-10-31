@@ -77,8 +77,5 @@ module.exports = {
       {
           reply( { "text" : request.server.settings.app.access_denied } );
       }
-  },/* Additional Config Here, Don't Add Validation */
-  config: {
-    validate: { }
   }
 };
