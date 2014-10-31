@@ -69,3 +69,7 @@ The 'app' part of config is for application specific config.
 
 
 If you want to use your own routes, create a folder called "routes" and add more routes to it. This is just adding to hapi.js routes and would let you add multiple slack outgoing webhooks to the server and not have to create a different web server. For each extra route, the slack validators are added using Joi.
+
+TODO:
+
+Add tests. Hapi JS has a really nice way to do testing, they are pushing requests to the server locally. Will implement tests using mocha.
