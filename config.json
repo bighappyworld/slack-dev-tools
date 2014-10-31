@@ -27,7 +27,7 @@
       { "key" : "user-agent",
         "value" : "Slackbot 1.0 (+https://api.slack.com/robots)" },
       { "key" : "host",
-        "value" : "api.below.io" }
+        "value" : "api.example.com" }
     ]
   }
 }
