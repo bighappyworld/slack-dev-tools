@@ -1,0 +1,45 @@
+{
+  "apps" : [
+    {
+      "name"             : "slack-dev",
+      "script"           : "app.js",
+      "error_file"       : "err.log",
+      "out_file"         : "out.log",
+      "pid_file"         : "pids.pid",
+      "instances"        : "1",
+      "min_uptime"       : "1000",
+      "watch"            : true,
+      "ignoreWatch"      : [ "node_modules" ],
+      "merge_logs"       : "true",
+      "exec_interpreter" : "node",
+      "exec_mode"        : "fork_mode",
+      "env" : {
+        "COMMON_VARIABLE": "true"
+      },
+      "env_production" : {
+        "NODE_ENV": "production"
+      },
+      "env_dev" : {
+        "NODE_ENV": "dev"
+      }
+    }
+  ],
+  "deploy" : {
+    "production" : {
+      "user" : "node",
+      "host" : "api.example.com",
+      "ref"  : "origin/master",
+      "repo" : "bighappyworld@github.com:slack-dev-tools.git",
+      "path" : "/path/to/slack-dev-tools",
+      "post-deploy" : "npm install && pm2 startOrRestart pm2ecosystem.json --env production"
+    },
+    "dev" : {
+      "user" : "node",
+      "host" : "api.example.com",
+      "ref"  : "origin/master",
+      "repo" : "bighappyworld@github.com:slack-dev-tools.git",
+      "path" : "/path/to/slack-dev-tools",
+      "post-deploy" : "npm install && pm2 startOrRestart pm2ecosystem.json --env dev"
+    }
+  }
+}
