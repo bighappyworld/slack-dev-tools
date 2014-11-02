@@ -27,7 +27,7 @@ Most of the configuration is done with the config.json file.
 
 - *server.host* : the hostname passed to the hapi.js server
 - *server.host* : the port passed to the hapi.js server
-- *required_headers* : an array of required headers checked when a request is received
+- *server.required_headers* : an array of required headers checked when a request is received
 
 
 ```
