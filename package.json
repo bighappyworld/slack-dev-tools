@@ -24,6 +24,6 @@
   "bin": { "email-verify": "./app.js" },
   "author": "Robert Oaks <rob@below.io> (http://below.io/)",
   "license": "ISC",
-  "keywords": [ "slack", "command","line","command-line", "rest" ],
+  "keywords": [ "slack", "tools","developer","cli", "api" ],
   "private": true
 }

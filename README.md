@@ -1,39 +1,19 @@
-Slack Command Line
+Slack Dev Tools
 
-This is a tool intended to be used with Slack as an Outgoing Web Hook. The idea is to give you access to some command line tools from the Slack chat room. Since command line tools are somewhat dangerous to expose, there are a number of restrictions in place.
+These are some tools meant to be used with Slack's Incoming and Outgoing Web Hooks.
 
-You are also responsible for your own encryption.
+Install copy this repo to your server and run it. It runs with node and has been tested with PM2. If you need encryption, you are responsible for setting up that yourself.
 
-This tool uses hapi.js as a simple REST API solution. There are a number of ways you can extend / use this app.
+This uses hapi.js as a simple and fast api solution.
 
-The first is by modifying the config.json file.
+Most of the configuration is done with the config.json file.
+
 
 ```
 {
-  "host" : "localhost",
-  "port" : 5000,
-  "app" : {
-    "admin_ids" : [ "UXXXXXXXX", "UYYYYYYYY" ],
-    "cli_token" : "ThisIsYourSlackChannelToken",
-    "cli_file" : "./command-line.js",
-    "cli_path" : "/slack/cli/",
-    "access_denied" : "Invalid Request",
-    "request_denied" : "Invalid Request",
-    "illegal_command" : "Invalid Request",
-    "cli_filters" : {
-      "whitelist" : [ "pm2" ],
-      "blacklist" : [ "sudo", "&&", ";", "|" ],
-      "output_filters" : [
-                            {
-                              "regex" : "(\\[[0-9]*m)|(┌.*┐)|(├.*┤)|(└.*┘)",
-                              "txt" : ""
-                            }
-                         ]
-    },
-    "cli_commands" : [
-      { "slack_cmd" : "restart all", "cli_cmd" : "pm2 restart all" },
-      { "slack_cmd" : "node processes", "cli_cmd" : "ps -aux | grep node" }
-    ],
+  "server" : {
+    "host" : "localhost",
+    "port" : 5000,
     "required_headers" : [
       { "key" : "user-agent",
         "value" : "Slackbot 1.0 (+https://api.slack.com/robots)" },
@@ -42,49 +22,140 @@ The first is by modifying the config.json file.
     ]
   }
 }
+
 ```
-The 'host' & 'port' are used to configure the hapi.js server. I run this beyind an nginx reverse proxy, so localhost is the right host.
 
-The 'app' part of config is for application specific config.
-
-'admin_ids' are the slack user ids of people you want to be able to use this. It rejects requests from any other user ids. If you leave it empty, it accepts requests from everyone.
-
-'cli_token' is extremely important. This is the token given to you when you create a slack outgoing web hook.
-
-'cli_path' is the http path you want to use. It will be the same path you configure in slack. So if you configure your outgoing web hook to send data to http://api.example.com/slack/cli/ then the 'cli_path' would be /slack/cli/
-
-'access_denied', 'request_denied' and 'illegal_command' are the error messages. Change them if you want.
-
-'cli_filters' are the first level of important stuff.
-
-'whitelist' is an array of commands that let you go straight to the command line. I use pm2 as a process manager and so I add pm2 to the white list. Then I can use any pm2 commands, like pm2 list, pm2 restart all or anything from Slack.
-
-'blacklist' is an array of commands that could possibly be dangerous and you want to block.
-
-'output_filters' is an array of regular expressions and replacement text. the one as default filters out weird formatting and colors from the output before it replies to Slack.
-
-'cli_commands' are effectively aliases. So if you need to do specific commands, such as multi step commands, you can implement them here.
-
-'required_headers' are matched against the http request headers. Add any headers you need in there. If you add custom ones in your proxy, no problem, it will check for them.
+- *server.host* : the hostname passed to the hapi.js server
+- *server.host* : the port passed to the hapi.js server
+- *required_headers* : an array of required headers checked when a request is received
 
 
-If you want to use your own routes, create a folder called "routes" and add more routes to it. This is just adding to hapi.js routes and would let you add multiple slack outgoing webhooks to the server and not have to create a different web server. For each extra route, the slack validators are added using Joi.
+```
+{
+  "app" : {
+    "admin_ids" : [ "UXXXXXXXX", "UYYYYYYYY" ],
+    "team_ids" : [ ],
+    "bot_ids" : [ "USLACKBOT" ]
+  }
+}
+```
 
-I also did try getting the IP address of the slack server sending the POST, but the reverse dns lookup traces back to an amazon server with no unique way to identify that the post came from Slack servers.
+- *app.admin_ids* : the user ids of admins that are used when checking admin permissions
+- *app.team_ids* : the ids of teams that are used when checking team permissions
+- *app.bot_ids* : the user ids of bots that are used when throwing out bot sent information
 
-Example Deployment: (not going into much detail)
 
-1. First you need to make a Slack integration, Outgoing Webhook.
+```
+{
+  "messages" : {
+    "access_denied"   : "Access Denied",
+    "request_denied"  : "Request Denied",
+    "illegal_command" : "Illegal Command",
+    "invalid_request" : "Invalid Request",
+    "service_disabled": "Service Disabled",
+    "message_failed"  : "Message Failed"
+  }
+}
+```
 
-2. It will tell you to use a specific word to activate the webhook, I used 'cli'. The integration is made to sit on a specific channel, so choose one specific for the server you are going to work with. Or make multiple hooks in the same channel with different activation words for each server.
+- *messages* : these are messages that are used as responses in failed cases
 
-3. It will give you the "token" for that integration. Add that to the app config.
 
-4. The tricky thing is getting your user ids. Maybe this is a bad way to use it because they are annoying. I peeked at the request payload sent by Slack when I sent a message and when the other admin users sent messages. It gave me a user_id. These need to be put into an array in the config. It stops others in the team from using the cli.
+This next bit is used for all the services. Currently they are "cli", "devtools" and "xteam". It is used when routing commands and checking permissions so that the logic for checking doesn't have to be implemented in individual services.
 
-5. Configure your whitelist/blacklist/commands based on what you need.
+```
+{
+    "servicename" : {
+        "enabled" : true,
+        "token" : "ThisIsYourSlackServiceToken",
+        "permissions" : "admin",
+        "file_path" : "./services/cli.js",
+        "post_path" : "/slack/cli/",
+    }
+}
+```
 
-6. Run the app on your server and test it. I have included a sample app.js that runs the included config and an app.json file that has a pm2 style configuration. I like pm2, but you can use any process manager.
+- *servicename.enabled* : when false it rejects requests to this service
+- *servicename.token* : this is used to validate that outgoing webhooks have the right token (use the token you get when you create the outgoing webhook)
+- *servicename.permissions* : admin means only admins in the admin list, team means only teams in the team list, any means any requests get passed
+- *servicename.file_path* : this is the location of the implemented service
+- *servicename.post_path* : this is the path for the URL to use with the outgoing webhook
+
+CLI service
+
+```
+{
+  "cli" : {
+    "filters" : {
+      "whitelist" : [ "pm2" ],
+      "blacklist" : [ "sudo", "&&", ";", "|" ],
+      "output" : [
+                    {
+                      "regex" : "(\\[[0-9]*m)|(┌.*┐)|(├.*┤)|(└.*┘)",
+                      "txt" : ""
+                    }
+                  ]
+    },
+    "commands" : [
+      { "key" : "restart all",
+        "value" : "pm2 restart all" },
+      { "key" : "node processes",
+        "value" : "ps -aux | grep node" }
+    ],
+  }
+}
+```
+
+- *cli.filters.whitelist* : commands will only be executed if you whitelist the command. for example, if pm2 is whitelisted you can run any of the normal pm2 commands like "pm2 list", "pm2 restart 0" or "pm2 delete 0"
+- *cli.filters.blacklist* : these are checked first looking for banned words. use this to block specific uses and to prevent command chaining
+- *cli.filters.output* : this is an array of regex filters that are executed on the output of the commands, currently set only for removing the command line colors and some weird symbols
+- *cli.commands* : these are aliases for proper cli commands. notice you can do any command chaining here. the working directory is the same as the application
+
+
+Dev Tools
+
+This service is simple and has little to configure. It is used to get Slack specific ids. The commands you can use with devtools are:
+
+- userid : returns your user_id
+- channelid : returns the current channel_id
+- teamid : returns the current team_id
+- serviceid : returns the current service_id
+
+You'll find these values in the posts sent by Slack's outgoing webhooks.
+
+X Team
+
+This is a message relay service that can even relay messages across teams or just relay messages to other channels. It relies on an incoming and outgoing webhook.
+
+To set this up, it relies solely on you setting up your webhooks. First, create an incoming webhook with slack in the channel you want to relay messages into. It will give you something that looks like this as a URL
+
+```
+https://hooks.slack.com/services/T0XXXXXXX/B0XXXXXXX/someuglytokenlikething
+```
+
+You are going to take the last part and use it with the outgoing webhook. For the channel you want to use to relay content to your incoming webhook, this could be in your team or another team, the outgoing webhook will be configured with this URL:
+
+```
+http://api.example.com/your/xteam/path/T0XXXXXXX/B0XXXXXXX/someuglytokenlikething
+```
+
+Then anything that meets your outgoing webhook requirements will be relayed to the channel specified by the incoming webhook.
+
+You shouldn't touch the config.
+
+```
+{
+  "xteam" : {
+    "host" : "hooks.slack.com",
+    "path" : "/services"
+  }
+}
+```
+
+- *xteam.host* : this is the host for the incoming web hook (you don't need to change)
+- *xteam.path* : this is the path for the incoming web hook (you don't need to change)
+
+
 
 TODO:
 
