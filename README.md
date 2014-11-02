@@ -32,7 +32,7 @@ Most of the configuration is done with the config.json file.
 
 ```
 {
-  "app" : {
+  "auth" : {
     "admin_ids" : [ "UXXXXXXXX", "UYYYYYYYY" ],
     "team_ids" : [ ],
     "bot_ids" : [ "USLACKBOT" ]
@@ -40,9 +40,9 @@ Most of the configuration is done with the config.json file.
 }
 ```
 
-- *app.admin_ids* : the user ids of admins that are used when checking admin permissions
-- *app.team_ids* : the ids of teams that are used when checking team permissions
-- *app.bot_ids* : the user ids of bots that are used when throwing out bot sent information
+- *auth.admin_ids* : the user ids of admins that are used when checking admin permissions
+- *auth.team_ids* : the ids of teams that are used when checking team permissions
+- *auth.bot_ids* : the user ids of bots that are used when throwing out bot sent information
 
 
 ```
