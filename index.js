@@ -23,33 +23,39 @@ module.exports.loadConfig = function( path ) {
     }
 };
 
-function minifiedPath( path )
+/* This takes the specified path from the config and removes the parameters
+   to create a hashable, replicatable path for lookups
+*/
+function minifiedConfigPath( path )
 {
   // Going to remove optional arguments from the path
   var components = path.split( '/' ); // we need to remove parameters
-  var minifiedPath = "";
+  var minPath = "";
   for( var i = 0 ; i < components.length ; i++ )
   {
       var component = components[i];
       if( component.charAt(0) !== '{' && component.charAt(component.length - 1) !== '}' )
       {
-          minifiedPath += component;
+          minPath += component;
       }
   }
-  return minifiedPath;
+  return minPath;
 }
 
-function extractedPath( path, parameters )
+/* This takes the path from the request and removes the parameters,
+   to create a hashable, replicatable path for lookups
+*/
+function minifiedRequestPath( path, parameters )
 {
   var keys = Object.keys( parameters );
-  var minifiedPath = path;
+  var minPath = path;
   for( var i = 0 ; i < keys.length ; i++ )
   {
-      minifiedPath = minifiedPath.replace(parameters[keys[i]], '');
+      minPath = minPath.replace(parameters[keys[i]], '');
   }
 
-  minifiedPath = minifiedPath.replace( new RegExp( '/', 'g' ), '' );
-  return minifiedPath;
+  minPath = minPath.replace( new RegExp( '/', 'g' ), '' );
+  return minPath;
 }
 
 function hashPath( path )
@@ -72,7 +78,7 @@ module.exports.start = function(){
       service.path = service_config.post_path;
       server.route(service);
 
-      service_lookup[ hashPath(minifiedPath(service_config.post_path)) ] = {
+      service_lookup[ hashPath(minifiedConfigPath(service_config.post_path)) ] = {
                                                           "permissions" : service_config.permissions,
                                                           "enabled" : service_config.enabled,
                                                           "token" : service_config.token
@@ -104,22 +110,12 @@ module.exports.start = function(){
       }
   });
 
-  /*
-  server.ext('onPreAuth', function (request, next) {
-      next();
-  });
-
-  server.ext('onPostAuth', function (request, next) {
-      next();
-  });
-  */
-
   server.ext('onPreHandler', function (request, next) {
       var app = request.server.settings.app;
 
-      var auth = service_lookup[ hashPath(extractedPath( request.path, request.params ) ) ];
+      var auth = service_lookup[ hashPath(minifiedRequestPath( request.path, request.params ) ) ];
 
-      var bot_ids = app.app.bot_ids;
+      var bot_ids = app.auth.bot_ids;
       if( bot_ids.indexOf( request.payload.user_id ) >= 0 )
       {
           next( { "text" : "" } );
@@ -140,7 +136,7 @@ module.exports.start = function(){
       {
           if( auth.permissions === 'admin' )
           {
-              var ids = app.app.admin_ids;
+              var ids = app.auth.admin_ids;
               if( ids.indexOf( request.payload.user_id ) >= 0 )
               {
                   next();
@@ -152,7 +148,7 @@ module.exports.start = function(){
           }
           else if( auth.permissions === 'team' )
           {
-              var ids = app.app.team_ids;
+              var ids = app.auth.team_ids;
               if( ids.indexOf( request.payload.team_id ) >= 0 )
               {
                   next();

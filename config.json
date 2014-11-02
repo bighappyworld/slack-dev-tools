@@ -9,7 +9,7 @@
         "value" : "api.example.com" }
     ]
   },
-  "app" : {
+  "auth" : {
     "admin_ids" : [ "UXXXXXXXX", "UYYYYYYYY" ],
     "team_ids" : [ ],
     "bot_ids" : [ "USLACKBOT" ]
