@@ -1,4 +1,4 @@
-Slack Dev Tools
+# Slack Dev Tools
 
 These are some tools meant to be used with Slack's Incoming and Outgoing Web Hooks.
 
@@ -81,7 +81,7 @@ This next bit is used for all the services. Currently they are "cli", "devtools"
 - *servicename.file_path* : this is the location of the implemented service
 - *servicename.post_path* : this is the path for the URL to use with the outgoing webhook
 
-CLI service
+## CLI service
 
 ```
 {
@@ -112,7 +112,7 @@ CLI service
 - *cli.commands* : these are aliases for proper cli commands. notice you can do any command chaining here. the working directory is the same as the application
 
 
-Dev Tools
+## Dev Tools service
 
 This service is simple and has little to configure. It is used to get Slack specific ids. The commands you can use with devtools are:
 
@@ -123,7 +123,7 @@ This service is simple and has little to configure. It is used to get Slack spec
 
 You'll find these values in the posts sent by Slack's outgoing webhooks.
 
-X Team
+## X Team service
 
 This is a message relay service that can even relay messages across teams or just relay messages to other channels. It relies on an incoming and outgoing webhook.
 
