@@ -83,9 +83,6 @@ module.exports.start = function(){
   server.ext('onRequest', function (request, next) {
       var app = request.server.settings.app;
 
-      console.log( request.headers );
-      console.log( request.payload );
-
       var headers_passed = true;
       var required_headers = app.server.required_headers;
       for( var i = 0 ; i < required_headers.length ; i++ )
@@ -99,27 +96,23 @@ module.exports.start = function(){
 
       if( headers_passed && request.method === 'post' )
       {
-        console.log( "Headers Passed" );
         next();
       }
       else
       {
-        console.log( "Headers Failed" );
         next( { "text" : app.messages.request_denied } );
       }
   });
 
+  /*
   server.ext('onPreAuth', function (request, next) {
-      console.log("PreAuth");
       next();
   });
 
   server.ext('onPostAuth', function (request, next) {
-      console.log("PostAuth");
-      console.log( request.payload );
       next();
   });
-
+  */
 
   server.ext('onPreHandler', function (request, next) {
       var app = request.server.settings.app;

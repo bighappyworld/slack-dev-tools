@@ -10,9 +10,7 @@
       "min_uptime"       : "200",
 
       "watch"            : true,
-      "ignoreWatch"      : ["ashley-package",
-                            "node_modules",
-                            "bin"],
+      "ignoreWatch"      : ["node_modules"],
       "merge_logs"       : "true",
       "exec_interpreter" : "node",
       "exec_mode"        : "fork_mode",
