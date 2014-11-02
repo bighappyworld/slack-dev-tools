@@ -55,7 +55,7 @@
   },
   "xteam" : {
     "enabled" : true,
-    "token" : "ThisIsYourSlackServiceToken",
+    "token" : "",
     "permissions" : "all",
     "file_path" : "./services/xteam.js",
     "post_path" : "/slack/xteam/{team}/{service}/{token}",
