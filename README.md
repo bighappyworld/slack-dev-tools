@@ -157,6 +157,6 @@ You shouldn't touch the config.
 
 
 
-TODO:
+## TODO:
 
 Add tests. Hapi JS has a really nice way to do testing, they are pushing requests to the server locally. Will implement tests using mocha.
