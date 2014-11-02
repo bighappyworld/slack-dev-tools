@@ -1,33 +1,66 @@
 {
-  "host" : "localhost",
-  "port" : 5000,
-  "app" : {
-    "admin_ids" : [ "UXXXXXXXX", "UYYYYYYYY" ],
-    "cli_token" : "ThisIsYourSlackChannelToken",
-    "cli_file" : "./command-line.js",
-    "cli_path" : "/slack/cli/",
-    "access_denied" : "Invalid Request",
-    "request_denied" : "Invalid Request",
-    "illegal_command" : "Invalid Request",
-    "cli_filters" : {
-      "whitelist" : [ "pm2" ],
-      "blacklist" : [ "sudo", "&&", ";", "|" ],
-      "output_filters" : [
-                            {
-                              "regex" : "(\\[[0-9]*m)|(┌.*┐)|(├.*┤)|(└.*┘)",
-                              "txt" : ""
-                            }
-                         ]
-    },
-    "cli_commands" : [
-      { "slack_cmd" : "restart all", "cli_cmd" : "pm2 restart all" },
-      { "slack_cmd" : "node processes", "cli_cmd" : "ps -aux | grep node" }
-    ],
+  "server" : {
+    "host" : "localhost",
+    "port" : 5000,
     "required_headers" : [
       { "key" : "user-agent",
         "value" : "Slackbot 1.0 (+https://api.slack.com/robots)" },
       { "key" : "host",
         "value" : "api.example.com" }
     ]
+  },
+  "app" : {
+    "admin_ids" : [ "UXXXXXXXX", "UYYYYYYYY" ],
+    "team_ids" : [ ],
+    "bot_ids" : [ "USLACKBOT" ]
+  },
+  "messages" : {
+    "access_denied"   : "Access Denied",
+    "request_denied"  : "Request Denied",
+    "illegal_command" : "Illegal Command",
+    "invalid_request" : "Invalid Request",
+    "service_disabled": "Service Disabled",
+    "message_failed"  : "Message Failed"
+  },
+  "cli" : {
+    "enabled" : true,
+    "token" : "ThisIsYourSlackServiceToken",
+    "permissions" : "admin",
+    "file_path" : "./services/cli.js",
+    "post_path" : "/slack/cli/",
+
+    "filters" : {
+      "whitelist" : [ "pm2" ],
+      "blacklist" : [ "sudo", "&&", ";", "|" ],
+      "output" : [
+                    {
+                      "regex" : "(\\[[0-9]*m)|(┌.*┐)|(├.*┤)|(└.*┘)",
+                      "txt" : ""
+                    }
+                  ]
+    },
+    "commands" : [
+      { "key" : "restart all",
+        "value" : "pm2 restart all" },
+      { "key" : "node processes",
+        "value" : "ps -aux | grep node" }
+    ],
+  },
+  "devtools" : {
+    "enabled" : true,
+    "token" : "ThisIsYourSlackServiceToken",
+    "permissions" : "team",
+    "file_path" : "./services/devtools.js",
+    "post_path" : "/slack/devtools/",
+  },
+  "xteam" : {
+    "enabled" : true,
+    "token" : "ThisIsYourSlackServiceToken",
+    "permissions" : "all",
+    "file_path" : "./services/xteam.js",
+    "post_path" : "/slack/xteam/{team}/{service}/{token}",
+
+    "host" : "hooks.slack.com",
+    "path" : "/services"
   }
 }
