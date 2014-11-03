@@ -3,9 +3,9 @@
     {
       "name"             : "slack-dev",
       "script"           : "app.js",
-      "error_file"       : "err.log",
-      "out_file"         : "out.log",
-      "pid_file"         : "pids.pid",
+      "error_file"       : "logs/err.log",
+      "out_file"         : "logs/out.log",
+      "pid_file"         : "pids/pids.pid",
       "instances"        : "1",
       "min_uptime"       : "1000",
       "watch"            : true,
