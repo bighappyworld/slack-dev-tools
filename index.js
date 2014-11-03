@@ -32,15 +32,17 @@ module.exports.start = function() {
     if( service_config.file_path ) {
       var service = require( service_config.file_path );
       service.path = service_config.post_path;
-      server.route(service);
 
-      security.addAuthorization( service_config.post_path,
-                                 {
-                                   "permissions" : service_config.permissions,
-                                   "enabled" : service_config.enabled,
-                                   "token" : service_config.token
-                                 }
-                               );
+      var auth = { "permissions" : service_config.permissions,
+                   "enabled" : service_config.enabled,
+                   "token" : service_config.token };
+      try {
+        security.addAuthorization( service_config.post_path, auth );
+        server.route(service);
+      } catch( ex ) {
+        console.log( ex );
+      }
+
     }
   });
 
