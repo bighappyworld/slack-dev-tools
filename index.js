@@ -1,10 +1,28 @@
 var Hapi = require('hapi');
 var Joi = require('joi');
-
-
 var security = require('./lib/security.js');
 
 var config;
+var server;
+
+module.exports.testRequest = function( options, callback ) {
+  server.inject( options, function( res ){
+    callback(res);
+  });
+};
+
+module.exports.getMessage = function( identifier ) {
+  if( config ) {
+    return config.messages[identifier];
+  }
+  else return null;
+}
+
+module.exports.stopServer = function() {
+  server.stop({ timeout: 100 }, function () {
+    security.clearAuthorizations();
+  });
+}
 
 module.exports.loadConfig = function( path ) {
     if( path ){
@@ -23,7 +41,7 @@ module.exports.loadConfig = function( path ) {
 module.exports.start = function() {
   if( !config ) module.exports.loadConfig();
 
-  var server = new Hapi.Server(config.server.host, config.server.port, { app : config });
+  server = new Hapi.Server(config.server.host, config.server.port, { app : config });
 
   /* add services to the API */
 
@@ -40,13 +58,14 @@ module.exports.start = function() {
         security.addAuthorization( service_config.post_path, auth );
         server.route(service);
       } catch( ex ) {
-        console.log( ex );
+        console.log( "Exception loading authorizations: " + ex );
       }
 
     }
   });
 
   server.ext('onRequest', function (request, next) {
+      var app = request.server.settings.app;
       if( security.validateHeaders( request ) && request.method === 'post' ) {
         next();
       }
@@ -56,7 +75,7 @@ module.exports.start = function() {
   });
 
   server.ext('onPreHandler', function (request, next) {
-
+      var app = request.server.settings.app;
       var auth = security.lookupAuthorization( request.path, request.params );
       var result = security.checkPermissions( request, auth );
 
@@ -71,7 +90,7 @@ module.exports.start = function() {
   });
 
   server.start(function () {
-      console.log('Slack Command Line Server running at:', server.info.uri);
+      //console.log('Slack Command Line Server running at:', server.info.uri);
   });
 
 }
