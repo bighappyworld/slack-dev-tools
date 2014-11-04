@@ -17,9 +17,7 @@ module.exports = {
 
       var data = {
           "username": request.payload.user_name,
-          "text": text,
-          "color" : "#3333FF",
-          "user_id" : request.payload.user_id
+          "text": text
       };
 
       var data_json = JSON.stringify(data);
@@ -39,15 +37,16 @@ module.exports = {
       // Set up the request
       var post_req = https.request(post_options, function(res) {
           res.setEncoding('utf8');
+          var success = false;
           res.on('data', function (chunk) {
-              console.log('Response: ' + chunk);
+              success = true;
           });
           res.on('end', function() {
-              reply( { "text" : "" } );
+              reply( { "text" : "", "success" : success } );
           });
       });
       post_req.on('error', function(e) {
-          reply( { "text" : app.messages.message_failed } );
+          reply( { "text" : app.messages.message_failed, "success" : false } );
       });
 
       // post the data
