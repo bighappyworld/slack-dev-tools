@@ -33,16 +33,18 @@ Most of the configuration is done with the config.json file.
 ```
 {
   "auth" : {
-    "admin_ids" : [ "UXXXXXXXX", "UYYYYYYYY" ],
-    "team_ids" : [ ],
-    "bot_ids" : [ "USLACKBOT" ]
+    "admin" : [ "UXXXXXXXX", "UYYYYYYYY" ],
+    "team" : [ ],
+    "bot" : [ "USLACKBOT" ]
   }
 }
 ```
 
-- *auth.admin_ids* : the user ids of admins that are used when checking admin permissions
-- *auth.team_ids* : the ids of teams that are used when checking team permissions
-- *auth.bot_ids* : the user ids of bots that are used when throwing out bot sent information
+- *auth.admin* : the user ids of admins that are used when checking admin permissions
+- *auth.team* : the ids of teams that are used when checking team permissions
+- *auth.bot* : the user ids of bots that are used when throwing out bot sent information
+
+These names correspond with the security level. If you want to make a new security level, add it to this and to the service.
 
 
 ```

@@ -10,9 +10,9 @@
     ]
   },
   "auth" : {
-    "admin_ids" : [ "UXXXXXXXX", "UYYYYYYYY" ],
-    "team_ids" : [ ],
-    "bot_ids" : [ "USLACKBOT" ]
+    "admin" : [ "UXXXXXXXX", "UYYYYYYYY" ],
+    "team" : [ ],
+    "bot" : [ "USLACKBOT" ]
   },
   "messages" : {
     "access_denied"   : "Access Denied",
@@ -62,5 +62,20 @@
 
     "host" : "hooks.slack.com",
     "path" : "/services"
+  },
+  "twitter" : {
+    "enabled" : true,
+    "token" : "ThisIsYourSlackServiceToken",
+    "permissions" : "admin",
+    "file_path" : "./services/twitter.js",
+    "post_path" : "/slack/twitter/",
+
+    "bitly_user" : "USERNAME",
+    "bitly_token" : "TOKEN",
+
+    "twitter_consumer_key" : "key",
+    "twitter_consumer_secret" : "secret",
+    "twitter_access_token" : "key",
+    "twitter_access_token_secret" : "secret"
   }
 }
