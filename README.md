@@ -16,9 +16,9 @@ Most of the configuration is done with the config.json file.
     "port" : 5000,
     "required_headers" : [
       { "key" : "user-agent",
-        "value" : "Slackbot 1.0 (+https://api.slack.com/robots)" },
+        "values" : ["Slackbot 1.0 (+https://api.slack.com/robots)"] },
       { "key" : "host",
-        "value" : "api.example.com" }
+        "values" : ["api.example.com"] }
     ]
   }
 }
@@ -27,7 +27,7 @@ Most of the configuration is done with the config.json file.
 
 - *server.host* : the hostname passed to the hapi.js server
 - *server.host* : the port passed to the hapi.js server
-- *server.required_headers* : an array of required headers checked when a request is received
+- *server.required_headers* : an array of required headers checked when a request is received. the header must be at least one of the values. this allows for multiple services to submit requests.
 
 
 ```
