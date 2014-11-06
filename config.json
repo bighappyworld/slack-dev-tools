@@ -4,9 +4,9 @@
     "port" : 5000,
     "required_headers" : [
       { "key" : "user-agent",
-        "value" : "Slackbot 1.0 (+https://api.slack.com/robots)" },
+        "values" : ["Slackbot 1.0 (+https://api.slack.com/robots)"] },
       { "key" : "host",
-        "value" : "api.example.com" }
+        "values" : ["api.example.com"] }
     ]
   },
   "auth" : {
@@ -24,7 +24,7 @@
   },
   "cli" : {
     "enabled" : true,
-    "token" : "ThisIsYourSlackServiceToken",
+    "tokens" : ["ThisIsYourSlackServiceToken"],
     "permissions" : "admin",
     "file_path" : "./services/cli.js",
     "post_path" : "/slack/cli/",
@@ -48,14 +48,14 @@
   },
   "devtools" : {
     "enabled" : true,
-    "token" : "ThisIsYourSlackServiceToken",
+    "tokens" : ["ThisIsYourSlackServiceToken"],
     "permissions" : "team",
     "file_path" : "./services/devtools.js",
     "post_path" : "/slack/devtools/",
   },
   "xteam" : {
     "enabled" : true,
-    "token" : "",
+    "tokens" : [""],
     "permissions" : "all",
     "file_path" : "./services/xteam.js",
     "post_path" : "/slack/xteam/{team}/{service}/{token}",
@@ -65,7 +65,7 @@
   },
   "twitter" : {
     "enabled" : true,
-    "token" : "ThisIsYourSlackServiceToken",
+    "tokens" : ["ThisIsYourSlackServiceToken"],
     "permissions" : "admin",
     "file_path" : "./services/twitter.js",
     "post_path" : "/slack/twitter/",
