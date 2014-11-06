@@ -69,7 +69,7 @@ This next bit is used for all the services. Currently they are "cli", "devtools"
 {
     "servicename" : {
         "enabled" : true,
-        "token" : "ThisIsYourSlackServiceToken",
+        "tokens" : "[ThisIsYourSlackServiceToken]",
         "permissions" : "admin",
         "file_path" : "./services/cli.js",
         "post_path" : "/slack/cli/",
@@ -78,7 +78,7 @@ This next bit is used for all the services. Currently they are "cli", "devtools"
 ```
 
 - *servicename.enabled* : when false it rejects requests to this service
-- *servicename.token* : this is used to validate that outgoing webhooks have the right token (use the token you get when you create the outgoing webhook)
+- *servicename.tokens* : this is used to validate that outgoing webhooks have the right token (use the token you get when you create the outgoing webhook, you can have multiple tokens for multiple hooks using the same service)
 - *servicename.permissions* : admin means only admins in the admin list, team means only teams in the team list, any means any requests get passed
 - *servicename.file_path* : this is the location of the implemented service
 - *servicename.post_path* : this is the path for the URL to use with the outgoing webhook
