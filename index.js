@@ -19,6 +19,7 @@ module.exports.getMessage = function( identifier ) {
 }
 
 module.exports.stopServer = function() {
+  console.debug( 'Service Stopped' );
   server.stop({ timeout: 100 }, function () {
     security.clearAuthorizations();
   });
@@ -29,13 +30,15 @@ module.exports.loadConfig = function( path ) {
         try {
             config = require( path );
         }catch( err ) {
-            console.log( "Error loading config file at: [" + path +"], using default config" );
+            console.debug( "Error loading config file at: [" + path +"], using default config" );
             config = require('./config.json');
         }
     }
     else {
         config = require('./config.json');
     }
+    if( config.server.debug ) console.debug = console.log;
+    else console.debug = function() {};
 };
 
 module.exports.start = function() {
@@ -53,18 +56,19 @@ module.exports.start = function() {
 
       var auth = { "permissions" : service_config.permissions,
                    "enabled" : service_config.enabled,
-                   "token" : service_config.token };
+                   "tokens" : service_config.tokens };
       try {
         security.addAuthorization( service_config.post_path, auth );
         server.route(service);
       } catch( ex ) {
-        console.log( "Exception loading authorizations: " + ex );
+        console.debug( "Exception loading authorizations: " + ex );
       }
 
     }
   });
 
   server.ext('onRequest', function (request, next) {
+      console.debug( 'OnRequest' );
       var app = request.server.settings.app;
       if( security.validateHeaders( request ) && request.method === 'post' ) {
         next();
@@ -74,11 +78,23 @@ module.exports.start = function() {
       }
   });
 
+  server.ext('onPreAuth', function (request, next) {
+      console.debug( 'onPreAuth' );
+      next();
+
+  });
+
+  server.ext('onPostAuth', function (request, next) {
+      console.debug( "onPostAuth" );
+      next();
+
+  });
+
   server.ext('onPreHandler', function (request, next) {
+      console.debug( "onPostAuth" );
       var app = request.server.settings.app;
       var auth = security.lookupAuthorization( request.path, request.params );
       var result = security.checkPermissions( request, auth );
-
       switch( result ) {
         case 'ok' : next(); break;
         case 'ignore' : next( { "text" : "" } ); break;
@@ -89,8 +105,14 @@ module.exports.start = function() {
 
   });
 
+  server.ext('onPreResponse', function (request, next) {
+      console.debug( "onPreResponse" );
+      next();
+
+  });
+
   server.start(function () {
-      //console.log('Slack Command Line Server running at:', server.info.uri);
+      console.debug('Slack Command Line Server running at:', server.info.uri);
   });
 
 }
