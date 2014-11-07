@@ -2,12 +2,22 @@
 
 These are some tools meant to be used with Slack's Incoming and Outgoing Web Hooks.
 
+It is slowly evolving into a tool that lets you set permissions on actions based on users or teams and allows for one server to manage multiple team's incoming / outoging webhooks.
+
+Completed modules are:
+
+- *cli* : A command line interface with whitelists, blacklists, output filters and command aliases.
+- *devtools* : A module letting you get the user ids, channel ids, team ids, service ids that are created by Slack servers
+- *twitter* : Let's you tweet from Slack and use bitly to shorten your URLs
+- *xteam* : A cross team communication module, letting you share channels between teams
+- *mandrillnotify* : A service that lets you send your Mandrill Webhooks to the server and get displayed in a Slack channel via Incoming Webhook
+
+
 Install copy this repo to your server and run it. It runs with node and has been tested with PM2. If you need encryption, you are responsible for setting up that yourself.
 
 This uses hapi.js as a simple and fast api solution.
 
 Most of the configuration is done with the config.json file.
-
 
 ```
 {
@@ -33,16 +43,22 @@ Most of the configuration is done with the config.json file.
 ```
 {
   "auth" : {
-    "admin" : [ "UXXXXXXXX", "UYYYYYYYY" ],
-    "team" : [ ],
-    "bot" : [ "USLACKBOT" ]
+    "bot" : [ "USLACKBOT" ],
+    "user" : {
+      "admin" : [ "UXXXXXXXX", "UYYYYYYYY" ],
+      "social" : [ "UAAAAAAAAA", "UXXXXXXXXXX" ]
+    }
+    "team" {
+      "testers" : [ "TXXXXXXXXX" ]
+    }
   }
 }
 ```
-
-- *auth.admin* : the user ids of admins that are used when checking admin permissions
-- *auth.team* : the ids of teams that are used when checking team permissions
-- *auth.bot* : the user ids of bots that are used when throwing out bot sent information
+- *auth.user* : this is used when you specify user *type* security, inside are the groups of users
+- *auth.team* : this is used when you specify team *type* security, inside are the groups of teams
+- *auth.user.admin* : this is permissions type user, permissions group admin, an array of admin user ids
+- *auth.team.testers* : the ids of teams that are used when checking team permissions
+- *auth.bot* : the user ids of bots that are used when throwing out bot sent information, this is used to ignore bot information
 
 These names correspond with the security level. If you want to make a new security level, add it to this and to the service.
 
@@ -156,6 +172,52 @@ You shouldn't touch the config.
 
 - *xteam.host* : this is the host for the incoming web hook (you don't need to change)
 - *xteam.path* : this is the path for the incoming web hook (you don't need to change)
+
+
+## Twitter
+
+This is built to let you tweet from Slack. However, it is built using things from the twitter developer API. You will need to get a dev account there in order to have the proper keys and tokens. And you'll also want a bitly account to use with URL shortening.
+
+
+```
+{
+    "bitly_user" : "bitlyuser",
+    "bitly_token" : "bitlyreallylongtoken",
+    "twitter_consumer_key" : "consumer_key",
+    "twitter_consumer_secret" : "consumer_secret",
+    "twitter_access_token" : "access_token",
+    "twitter_access_token_secret" : "access_token_secret"
+}
+```
+
+Get that information, complete the config and then you can say (I setup my Outgoing webhook to use "tweet" as the trigger word):
+
+```
+tweet I love Slack!
+```
+
+Anything after "tweet" will be tweeted and it will respond to tell you exactly what was tweeted. This is not related to the offical twitter integration on Slack. I'm fairly sure in that one you can't tweet and beyond that, this is adding a permissions level to it so you can designate who can tweet from your company account.
+
+TODO: Make bitly optional
+
+## Mandrill Notify
+
+This is built to simply relay your Mandrill Webhooks into a Slack channel. To do this, you'll need to set up an incoming webhook in Slack. It will give you an ugly looking URL like:
+
+```
+https://hooks.slack.com/services/T0XXXXXXX/B0XXXXXXX/someuglytokenlikething
+```
+
+You'll then use the last 3 parts to configure your path inside the config:
+
+```
+{
+   "host" : "hooks.slack.com",
+   "path" : "/services/T0XXXXXXX/B0XXXXXXX/someuglytokenlikething"
+}
+```
+
+Then you need to setup your webhook in Mandrill to send to the "post_path" in the config.
 
 
 
