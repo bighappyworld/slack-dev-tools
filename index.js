@@ -30,7 +30,7 @@ module.exports.loadConfig = function( path ) {
         try {
             config = require( path );
         }catch( err ) {
-            console.debug( "Error loading config file at: [" + path +"], using default config" );
+            console.log( "Error loading config file at: [" + path +"], using default config" );
             config = require('./config.json');
         }
     }
@@ -41,6 +41,32 @@ module.exports.loadConfig = function( path ) {
     else console.debug = function() {};
 };
 
+module.exports.loadServices = function( config ) {
+
+    Object.keys(config).forEach(function(key) {
+      var service_config = config[key];
+      if( service_config.file_path ) {
+        var service;
+        try {
+          service = require( service_config.file_path );
+        } catch( ex ) {
+          console.debug( "Exception loading service: " + ex );
+        }
+        if( service ){
+          service.path = service_config.post_path;
+          try {
+            security.addAuthorization( service_config );
+            server.route(service);
+          } catch( ex ) {
+            console.debug( "Exception loading authorizations: " + ex );
+          }
+        }
+      }
+    });
+
+}
+
+
 module.exports.start = function() {
   if( !config ) module.exports.loadConfig();
 
@@ -48,24 +74,7 @@ module.exports.start = function() {
 
   /* add services to the API */
 
-  Object.keys(config).forEach(function(key) {
-    var service_config = config[key];
-    if( service_config.file_path ) {
-      var service = require( service_config.file_path );
-      service.path = service_config.post_path;
-
-      var auth = { "permissions" : service_config.permissions,
-                   "enabled" : service_config.enabled,
-                   "tokens" : service_config.tokens };
-      try {
-        security.addAuthorization( service_config.post_path, auth );
-        server.route(service);
-      } catch( ex ) {
-        console.debug( "Exception loading authorizations: " + ex );
-      }
-
-    }
-  });
+  this.loadServices( config );
 
   server.ext('onRequest', function (request, next) {
       console.debug( 'OnRequest' );
