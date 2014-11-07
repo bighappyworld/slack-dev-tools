@@ -4,16 +4,21 @@
     "port" : 5000,
     "required_headers" : [
       { "key" : "user-agent",
-        "values" : ["Slackbot 1.0 (+https://api.slack.com/robots)"] },
+        "values" : ["Slackbot 1.0 (+https://api.slack.com/robots)","Mandrill-Webhook/1.0"] },
       { "key" : "host",
         "values" : ["api.example.com"] }
     ],
     "debug" : false
   },
   "auth" : {
-    "admin" : [ "UXXXXXXXX", "UYYYYYYYY" ],
-    "team" : [ ],
-    "bot" : [ "USLACKBOT" ]
+    "bot" : [ "USLACKBOT" ],
+    "user" : {
+      "admin" : [ "UADMINID" ],
+      "social" : [ "UADMINID" ]
+    },
+    "team" : {
+       "developers" : [ "TTEAMID" ]
+    }
   },
   "messages" : {
     "access_denied"   : "Access Denied",
@@ -25,13 +30,14 @@
   },
   "cli" : {
     "enabled" : true,
-    "tokens" : ["ThisIsYourSlackServiceToken"],
-    "permissions" : "admin",
+    "tokens" : ["configtoken-cli"],
+    "permissions_type" : "user",
+    "permissions_group" : "admin",
     "file_path" : "./services/cli.js",
     "post_path" : "/slack/cli/",
 
     "filters" : {
-      "whitelist" : [ "pm2" ],
+      "whitelist" : [ "date" ],
       "blacklist" : [ "sudo", "&&", ";", "|" ],
       "output" : [
                     {
@@ -45,19 +51,21 @@
         "value" : "pm2 restart all" },
       { "key" : "node processes",
         "value" : "ps -aux | grep node" }
-    ],
+    ]
   },
   "devtools" : {
     "enabled" : true,
-    "tokens" : ["ThisIsYourSlackServiceToken"],
-    "permissions" : "team",
+    "tokens" : ["configtoken-devtools"],
+    "permissions_type" : "team",
+    "permissions_group" : "developers",
     "file_path" : "./services/devtools.js",
-    "post_path" : "/slack/devtools/",
+    "post_path" : "/slack/devtools/"
   },
   "xteam" : {
     "enabled" : true,
     "tokens" : [""],
-    "permissions" : "all",
+    "permissions_type" : "open",
+    "permissions_group" : "all",
     "file_path" : "./services/xteam.js",
     "post_path" : "/slack/xteam/{team}/{service}/{token}",
 
@@ -66,17 +74,29 @@
   },
   "twitter" : {
     "enabled" : true,
-    "tokens" : ["ThisIsYourSlackServiceToken"],
-    "permissions" : "admin",
+    "tokens" : ["configtoken-twitter"],
+    "permissions_type" : "user",
+    "permissions_group" : "social",
     "file_path" : "./services/twitter.js",
     "post_path" : "/slack/twitter/",
 
     "bitly_user" : "USERNAME",
     "bitly_token" : "TOKEN",
 
-    "twitter_consumer_key" : "key",
-    "twitter_consumer_secret" : "secret",
-    "twitter_access_token" : "key",
-    "twitter_access_token_secret" : "secret"
+    "twitter_consumer_key" : "consumer_key",
+    "twitter_consumer_secret" : "consumer_secret",
+    "twitter_access_token" : "access_token",
+    "twitter_access_token_secret" : "access_token_secret"
+  },
+  "mandrillnotify" : {
+    "enabled" : true,
+    "tokens" : [""],
+    "permissions_type" : "open",
+    "permissions_group" : "all",
+    "file_path" : "./services/mandrillnotify.js",
+    "post_path" : "/slack/mandrillnotify/",
+
+    "host" : "hooks.slack.com",
+    "path" : "/services/TEAMID/SERVICEID/ACCESSTOKEN"
   }
 }
