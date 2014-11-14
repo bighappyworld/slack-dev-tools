@@ -84,6 +84,7 @@ module.exports = {
         }
 
       */
+      console.log( util.inspect(request.payload) );
 
       var replyText = "";
       var attachments = [];
@@ -155,34 +156,37 @@ module.exports = {
                 break;
             }
         }
-        attachments[i]['fields'] = [
-            {
-              "title" : "Recipient",
-              "value" : request.payload.mandrill_events[i].msg.email,
-              "short" : true
-            },
-            {
-              "title" : "Subject",
-              "value" : request.payload.mandrill_events[i].msg.subject,
-              "short" : true
-            },
-            {
-              "title" : "Location",
-              "value" : request.payload.mandrill_events[i].location.city + ', ' +
-                        request.payload.mandrill_events[i].location.country,
-              "short" : true
-            },
-            {
-              "title" : "Mail Client",
-              "value" : request.payload.mandrill_events[i].user_agent_parsed.ua_family + ' / ' +
-                        request.payload.mandrill_events[i].user_agent_parsed.os_family,
-              "short" : true
-            }
+        // THIS ONLY WORKS WITH A COUPLE DIFFERENT TYPES, NOT ALL EVENTS HAVE LOCATIONS
+        var recipient = request.payload.mandrill_events[i].msg.email ? request.payload.mandrill_events[i].msg.email : "Unknown";
+        var subject = request.payload.mandrill_events[i].msg.subject ? request.payload.mandrill_events[i].msg.subject : "Unknown";
+        var location = request.payload.mandrill_events[i].location.city && request.payload.mandrill_events[i].location.country ? request.payload.mandrill_events[i].location.city + ', ' + request.payload.mandrill_events[i].location.country : "Unknown";
+        var client = request.payload.mandrill_events[i].user_agent_parsed.ua_family && request.payload.mandrill_events[i].user_agent_parsed.os_family ? request.payload.mandrill_events[i].user_agent_parsed.ua_family + ' / ' + request.payload.mandrill_events[i].user_agent_parsed.os_family : "Unknown";
 
-        ];
+        var fields = [];
+        if( recipient ) fields.push({
+                                      "title" : "Recipient",
+                                      "value" : recipient,
+                                      "short" : true
+                                    });
+        if( subject ) fields.push({
+                                      "title" : "Subject",
+                                      "value" : subject,
+                                      "short" : true
+                                    });
+        if( location ) fields.push({
+                                      "title" : "Location",
+                                      "value" : location,
+                                      "short" : true
+                                    });
+        if( client ) fields.push({
+                                      "title" : "Client",
+                                      "value" : client,
+                                      "short" : true
+                                    });
+        attachments[i]['fields'] = fields;
       }
 
-      console.debug( util.inspect(attachments) );
+
 
       var data = {
           "text": "" + request.payload.mandrill_events.length + " Mandrill Event(s)",
