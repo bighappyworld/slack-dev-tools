@@ -157,6 +157,9 @@ module.exports = {
             }
         }
         // THIS ONLY WORKS WITH A COUPLE DIFFERENT TYPES, NOT ALL EVENTS HAVE LOCATIONS
+
+
+
         var recipient = request.payload.mandrill_events[i].msg.email ? request.payload.mandrill_events[i].msg.email : "Unknown";
         var subject = request.payload.mandrill_events[i].msg.subject ? request.payload.mandrill_events[i].msg.subject : "Unknown";
         var location = request.payload.mandrill_events[i].location.city && request.payload.mandrill_events[i].location.country ? request.payload.mandrill_events[i].location.city + ', ' + request.payload.mandrill_events[i].location.country : "Unknown";
