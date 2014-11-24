@@ -160,10 +160,13 @@ module.exports = {
 
 
 
-        var recipient = request.payload.mandrill_events[i].msg.email ? request.payload.mandrill_events[i].msg.email : "Unknown";
-        var subject = request.payload.mandrill_events[i].msg.subject ? request.payload.mandrill_events[i].msg.subject : "Unknown";
-        var location = request.payload.mandrill_events[i].location.city && request.payload.mandrill_events[i].location.country ? request.payload.mandrill_events[i].location.city + ', ' + request.payload.mandrill_events[i].location.country : "Unknown";
-        var client = request.payload.mandrill_events[i].user_agent_parsed.ua_family && request.payload.mandrill_events[i].user_agent_parsed.os_family ? request.payload.mandrill_events[i].user_agent_parsed.ua_family + ' / ' + request.payload.mandrill_events[i].user_agent_parsed.os_family : "Unknown";
+        var recipient =request.payload.mandrill_events[i].msg && request.payload.mandrill_events[i].msg.email ? request.payload.mandrill_events[i].msg.email : null;
+
+        var subject = request.payload.mandrill_events[i].msg && request.payload.mandrill_events[i].msg.subject ? request.payload.mandrill_events[i].msg.subject : null;
+
+        var location = request.payload.mandrill_events[i].location && request.payload.mandrill_events[i].location.city && request.payload.mandrill_events[i].location.country ? request.payload.mandrill_events[i].location.city + ', ' + request.payload.mandrill_events[i].location.country : null;
+
+        var client = request.payload.mandrill_events[i].user_agent_parsed && request.payload.mandrill_events[i].user_agent_parsed.ua_family && request.payload.mandrill_events[i].user_agent_parsed.os_family ? request.payload.mandrill_events[i].user_agent_parsed.ua_family + ' / ' + request.payload.mandrill_events[i].user_agent_parsed.os_family : null;
 
         var fields = [];
         if( recipient ) fields.push({
